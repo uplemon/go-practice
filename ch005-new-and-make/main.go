@@ -1,9 +1,15 @@
 package main
 
-import "fmt"
+import (
+    "fmt"
+    "reflect"
+)
 
 func main() {
-    varTest()
+    //varTest()
+    //newTest()
+    //varInitTest()
+    makeTest()
 }
 
 /**
@@ -27,4 +33,69 @@ func varTest()  {
     fmt.Println(*strP1)
 }
 
+/**
+ * 声明指针变量默认是没有分配内存的，可以通过内置函数new给它分配一块内存
+ * new的作用就是根据传入的类型申请一块内存，然后返回指向这块内存的指针，指针指向的数据就是该类型的零值
+ * 内置new函数定义：func new(Type) *Type
+ *
+ */
+func newTest() {
+    var strP *string
+    strP = new(string)
+    // 打印空字符串，也就是string的零值
+    fmt.Println(*strP)
+    // new已为指针变量分配了内存，可以直接赋值
+    *strP = "hello strP"
+    fmt.Println(*strP)
+}
 
+/**
+ * 定义一个结构体类型
+ */
+type Student struct {
+    name string
+    age int32
+}
+/**
+ * 变量初始化（不初始化的变量的值为该变量类型的零值）
+ * 当声明一个类型的变量时还对这个变量进行了赋值，这个修改变量值的过程称为变量的初始化
+ */
+func varInitTest() {
+    // 字面量初始化，基础类型和复合类型都可以通过这种方式进行初始化
+    p1 := Student{name: "student1", age: 19}
+    // 指针变量初始化
+    p2 := newStudent("student2", 20)
+    // 值变量
+    fmt.Printf("p1 type: %T\n", p1)
+    fmt.Println("p1 type:", reflect.TypeOf(p1))
+    // 指针变量
+    fmt.Printf("p2 type: %T\n", p2)
+    fmt.Println("p2 type:", reflect.TypeOf(p2))
+}
+// 通过封装函数初始化变量（工厂函数）
+func newStudent(name string, age int32) *Student {
+    s := new(Student)
+    s.name = name
+    s.age = age
+    return s
+}
+
+/**
+ * make返回引用类型
+ */
+func makeTest() {
+    makeMapTest()
+}
+
+func makeMapTest() {
+    var m map[string]string
+    m = make(map[string]string)
+    // m := make(map[string]string)
+    m["beijing"] = "北京"
+    m["shanghai"] = "上海"
+    m["guangzhou"] = "广州"
+    m["shenzhen"] = "深圳"
+    m["hangzhou"] = "杭州"
+    fmt.Println("m type:", reflect.TypeOf(m))
+    fmt.Println(m)
+}
