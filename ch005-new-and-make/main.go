@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 func main() {
-	varTest()
+    varTest()
 }
 
 /**
@@ -13,19 +13,18 @@ func main() {
  * 总结：如果要对一个变量赋值，这个变量必须有对应分配好的内存，这样才能对这块内存操作完成赋值目的
  */
 func varTest()  {
-	var str string
-	str = "hello str"
-	fmt.Println(str)
+    var str string
+    str = "hello str"
+    fmt.Println(str)
 
-	var strP *string
-	// panic: runtime error: invalid memory address or nil pointer dereference
-	*strP = "hello strP"
-	fmt.Println(*strP)
+    var strP *string
+    // panic: runtime error: invalid memory address or nil pointer dereference
+    *strP = "hello strP"
+    fmt.Println(*strP)
 
-	var strP1 *string = &str
-	*strP1 = "hello strP1"
-	fmt.Println(*strP1)
-	
+    var strP1 *string = &str
+    *strP1 = "hello strP1"
+    fmt.Println(*strP1)
 }
 
 
