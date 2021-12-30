@@ -25,6 +25,7 @@ func varTest()  {
 	var strP1 *string = &str
 	*strP1 = "hello strP1"
 	fmt.Println(*strP1)
+	
 }
 
 
