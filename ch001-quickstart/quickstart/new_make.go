@@ -1,13 +1,13 @@
-package main
+package quickstart
 
 import (
     "fmt"
     "reflect"
 )
 
-func main() {
+func NewMakeDemo() {
     //varTest()
-    //newTest()
+    newTest()
     //varInitTest()
     makeTest()
 }
@@ -37,7 +37,6 @@ func varTest()  {
  * 声明指针变量默认是没有分配内存的，可以通过内置函数new给它分配一块内存
  * new的作用就是根据传入的类型申请一块内存，然后返回指向这块内存的指针，指针指向的数据就是该类型的零值
  * 内置new函数定义：func new(Type) *Type
- *
  */
 func newTest() {
     var strP *string
@@ -82,12 +81,23 @@ func newStudent(name string, age int32) *Student {
 
 /**
  * make返回引用类型
+ * make函数只用于slice、map、chan这三种内置类型的创建和初始化
  */
 func makeTest() {
+    makeSliceTest()
     makeMapTest()
 }
 
+func makeSliceTest() {
+    slice := make([]string, 3, 3)
+    slice[0] = "a"
+    slice[1] = "b"
+    slice[2] = "c"
+    fmt.Println(slice)
+}
+
 func makeMapTest() {
+    // mapVar := map[string]string{"beijing":"北京", "shanghai":"上海"}
     var m map[string]string
     m = make(map[string]string)
     // m := make(map[string]string)
@@ -99,3 +109,7 @@ func makeMapTest() {
     fmt.Println("m type:", reflect.TypeOf(m))
     fmt.Println(m)
 }
+
+// 函数new和make的区别？
+// 1.new函数只用于分配内存，并且把内存清零，也就是返回一个指向对应类型零值的指针。new函数一般用于需要显式返回指针的情况。
+// 2.make函数只用于slice、chan和map这三种内置类型的创建和初始化。
