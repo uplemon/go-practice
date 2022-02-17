@@ -12,7 +12,7 @@ import (
  * goroutine被Go runtime所调用，这一点和线程不一样
  * Go语言的并发是由Go自己所调度的，自己决定同时执行多少个goroutine，什么时候执行哪几个
  * goroutine的调度对于开发者完全透明，开发者只需要在编码时告诉Go语言要启动几个goroutine
- * 启动一个goroutine非常简单，使用go关键字，
+ * 启动一个goroutine非常简单，使用go关键字加上相应的函数或方法即可
  */
 func GoroutineDemo()  {
     goroutineDemo1()
