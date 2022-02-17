@@ -11,5 +11,8 @@ func main() {
     //quickstart.StructDemo()
     //quickstart.InterfaceDemo()
     //quickstart.DeferDemo()
-    quickstart.NewMakeDemo()
+    //quickstart.NewMakeDemo()
+    //quickstart.ErrorDemo()
+    quickstart.PanicDemo()
+    //quickstart.TypeAssertionDemo()
 }
