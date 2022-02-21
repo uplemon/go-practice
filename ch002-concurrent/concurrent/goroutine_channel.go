@@ -136,13 +136,15 @@ func selectDemo() {
      * 如果同时有多个case可以被执行，则随机选择一个，这样每个case都有平等的被执行的机会
      * 如果一个select没有任何case，那么它会一直等待下去
      */
-    select {
-    case filePath := <-firstCh:
-        fmt.Println(filePath)
-    case filePath := <-secondCh:
-        fmt.Println(filePath)
-    case filePath := <-threeCh:
-        fmt.Println(filePath)
+    for i := 0; i < 3; i++ {
+        select {
+        case filePath := <-firstCh:
+            fmt.Println(filePath)
+        case filePath := <-secondCh:
+            fmt.Println(filePath)
+        case filePath := <-threeCh:
+            fmt.Println(filePath)
+        }
     }
 }
 
