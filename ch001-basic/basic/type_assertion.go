@@ -1,4 +1,4 @@
-package quickstart
+package basic
 
 import "fmt"
 
@@ -54,7 +54,7 @@ func TypeAssertionDemo() {
      * 基于这点，Go语言提供了类型断言的多值返回，类型断言返回的第二个值就是断言是否成功的标志(true/false)
      */
     // a := s.(address1)
-    // panic: interface conversion: fmt.Stringer is *quickstart.person1, not quickstart.address1
+    // panic: interface conversion: fmt.Stringer is *basic.person1, not basic.address1
     // fmt.Println(a)
     a, ok := s.(address1)
     if ok {
