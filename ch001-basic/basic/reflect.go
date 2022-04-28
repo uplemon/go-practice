@@ -12,7 +12,7 @@ type User struct {
 }
 
 func ReflectDemo() {
-	// reflectTypeDemo()
+	reflectTypeDemo()
 	reflectValueDemo()
 }
 
@@ -68,12 +68,12 @@ func reflectValueDemo() {
 }
 
 /**
-* 反射的三大法则：
-* 1. 反射可以将"接口类型变量"转换为"反射类型对象"
-     通过reflect.Type()和reflect.Value()将接口类型变量转换为反射类型对象
-* 2. 反射可以将"反射类型对象"转换为"接口类型变量"
-*    根据一个reflect.Value类型的变量，可以使用Interface()方法恢复其接口类型的值，
-*    该方法会把type和value信息打包并填充到一个接口变量中，然后返回
-* 3. 如果要修改"反射类型对象"，则其值必须是"可写的"
-*    创建反射对象时传入的变量是指针，使用Elem()方法返回指针指向的数据
-*/
+ * 反射的三大法则：
+ * 1. 反射可以将"接口类型变量"转换为"反射类型对象"
+ *    通过reflect.Type()和reflect.Value()将接口类型变量转换为反射类型对象
+ * 2. 反射可以将"反射类型对象"转换为"接口类型变量"
+ *    根据一个reflect.Value类型的变量，可以使用Interface()方法恢复其接口类型的值，
+ *    该方法会把type和value信息打包并填充到一个接口变量中，然后返回
+ * 3. 如果要修改"反射类型对象"，则其值必须是"可写的"
+ *    创建反射对象时传入的变量是指针，使用Elem()方法返回指针指向的数据
+ */
