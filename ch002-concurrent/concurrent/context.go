@@ -1,17 +1,17 @@
 package concurrent
 
 import (
-    "context"
-    "fmt"
-    "sync"
-    "time"
+	"context"
+	"fmt"
+	"sync"
+	"time"
 )
 
 func ContextDemo() {
-    watchDogDemo()
-    contextWatchDogDemo()
-    contextWatchDogDemo1()
-    contextValueDemo()
+	watchDogDemo()
+	contextWatchDogDemo()
+	contextWatchDogDemo1()
+	contextValueDemo()
 }
 
 /**
@@ -20,30 +20,30 @@ func ContextDemo() {
  * 通过channel发送指令让监控程序停止，进而达到协程退出的目的。
  */
 func watchDogDemo() {
-    var wg sync.WaitGroup
-    stopCh := make(chan bool) // 用来停止监控程序
-    wg.Add(1)
-    go func() {
-        defer wg.Done()
-        watchDog(stopCh, "[monitor]")
-    }()
-    time.Sleep(time.Second * 5) // 先让监控程序监控5秒
-    stopCh <- true // 发送停止指令
-    wg.Wait()
+	var wg sync.WaitGroup
+	stopCh := make(chan bool) // 用来停止监控程序
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		watchDog(stopCh, "[monitor]")
+	}()
+	time.Sleep(time.Second * 5) // 先让监控程序监控5秒
+	stopCh <- true              // 发送停止指令
+	wg.Wait()
 }
 func watchDog(stopCh chan bool, name string) {
-    // 开启for select循环，一直后台监控
-    for {
-        select {
-        case <- stopCh:
-            fmt.Printf("%s停止指令已收到，马上停止\n", name)
-            return
-        default:
-            fmt.Printf("%s正在监控...\n", name)
-            // ...
-        }
-        time.Sleep(time.Second * 1)
-    }
+	// 开启for select循环，一直后台监控
+	for {
+		select {
+		case <-stopCh:
+			fmt.Printf("%s停止指令已收到，马上停止\n", name)
+			return
+		default:
+			fmt.Printf("%s正在监控...\n", name)
+			// ...
+		}
+		time.Sleep(time.Second * 1)
+	}
 }
 
 /**
@@ -52,31 +52,32 @@ func watchDog(stopCh chan bool, name string) {
  * 要解决这种复杂的协程问题，必须有一种可以跟踪协程的方案，只有跟踪到每个协程才能更好的控制它们，Go语言标准库提供了Context用来解决这类问题。
  */
 func contextWatchDogDemo() {
-    var wg sync.WaitGroup
-    ctx, stop := context.WithCancel(context.Background())
-    wg.Add(1)
-    go func() {
-        defer wg.Done()
-        contextWatchDog(ctx, "[monitor]")
-    }()
-    time.Sleep(time.Second * 5) // 先让监控程序监控5秒
-    stop() // 发送停止指令
-    wg.Wait()
+	var wg sync.WaitGroup
+	ctx, stop := context.WithCancel(context.Background())
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		contextWatchDog(ctx, "[monitor]")
+	}()
+	time.Sleep(time.Second * 5) // 先让监控程序监控5秒
+	stop()                      // 发送停止指令
+	wg.Wait()
 }
 func contextWatchDog(ctx context.Context, name string) {
-    // 开启for select循环，一直后台监控
-    for {
-        select {
-        case <-ctx.Done():
-            fmt.Printf("%s停止指令已收到，马上停止\n", name)
-            return
-        default:
-            fmt.Printf("%s正在监控...\n", name)
-            // ...
-        }
-        time.Sleep(time.Second * 1)
-    }
+	// 开启for select循环，一直后台监控
+	for {
+		select {
+		case <-ctx.Done():
+			fmt.Printf("%s停止指令已收到，马上停止\n", name)
+			return
+		default:
+			fmt.Printf("%s正在监控...\n", name)
+			// ...
+		}
+		time.Sleep(time.Second * 1)
+	}
 }
+
 /**
  * 相比select+channel的方案，Context方案主要有4个改动点：
  * 1. watchDog的stopCh参数换成了ctx，类型为context.Context。
@@ -134,38 +135,38 @@ func contextWatchDog(ctx context.Context, name string) {
  * 如果一个Context有子Context，当该Context取消时，该节点下的所有子Context都会被取消。
  */
 func contextWatchDogDemo1() {
-    var wg sync.WaitGroup
-    ctx, stop := context.WithCancel(context.Background())
-    wg.Add(3)
-    go func() {
-        defer wg.Done()
-        contextWatchDog1(ctx, "[monitor_1]")
-    }()
-    go func() {
-        defer wg.Done()
-        contextWatchDog1(ctx, "[monitor_2]")
-    }()
-    go func() {
-        defer wg.Done()
-        contextWatchDog1(ctx, "[monitor_3]")
-    }()
-    time.Sleep(time.Second * 5) // 先让监控程序监控5秒
-    stop() // 发送停止指令
-    wg.Wait()
+	var wg sync.WaitGroup
+	ctx, stop := context.WithCancel(context.Background())
+	wg.Add(3)
+	go func() {
+		defer wg.Done()
+		contextWatchDog1(ctx, "[monitor_1]")
+	}()
+	go func() {
+		defer wg.Done()
+		contextWatchDog1(ctx, "[monitor_2]")
+	}()
+	go func() {
+		defer wg.Done()
+		contextWatchDog1(ctx, "[monitor_3]")
+	}()
+	time.Sleep(time.Second * 5) // 先让监控程序监控5秒
+	stop()                      // 发送停止指令
+	wg.Wait()
 }
 func contextWatchDog1(ctx context.Context, name string) {
-    // 开启for select循环，一直后台监控
-    for {
-        select {
-        case <-ctx.Done():
-            fmt.Printf("%s停止指令已收到，马上停止\n", name)
-            return
-        default:
-            fmt.Printf("%s正在监控...\n", name)
-            // ...
-        }
-        time.Sleep(time.Second * 1)
-    }
+	// 开启for select循环，一直后台监控
+	for {
+		select {
+		case <-ctx.Done():
+			fmt.Printf("%s停止指令已收到，马上停止\n", name)
+			return
+		default:
+			fmt.Printf("%s正在监控...\n", name)
+			// ...
+		}
+		time.Sleep(time.Second * 1)
+	}
 }
 
 /**
@@ -173,20 +174,20 @@ func contextWatchDog1(ctx context.Context, name string) {
  * 通过Context还可以传递共享的数据，比如将一个请求处理或调用过程串起来，就可以在函数调用的时候传递context。
  */
 func contextValueDemo() {
-    ctx := context.Background()
-    // ctx是一个空context
-    process(ctx)
-    // 通过context.WithValue函数为context赋值
-    ctx = context.WithValue(ctx, "traceId", "t_1156813585")
-    process(ctx)
+	ctx := context.Background()
+	// ctx是一个空context
+	process(ctx)
+	// 通过context.WithValue函数为context赋值
+	ctx = context.WithValue(ctx, "traceId", "t_1156813585")
+	process(ctx)
 }
 func process(ctx context.Context) {
-    traceId, ok := ctx.Value("traceId").(string)
-    if ok {
-        fmt.Printf("traceId:%s\n", traceId)
-    } else {
-        fmt.Printf("no traceId\n")
-    }
+	traceId, ok := ctx.Value("traceId").(string)
+	if ok {
+		fmt.Printf("traceId:%s\n", traceId)
+	} else {
+		fmt.Printf("no traceId\n")
+	}
 }
 
 /**

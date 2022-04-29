@@ -1,16 +1,15 @@
 package basic
 
 import (
-    "fmt"
-    "io"
-    "os"
+	"fmt"
+	"io"
+	"os"
 )
 
-
 func DeferDemo() {
-    filename := "/tmp/tmp.txt"
-    ReadFile(filename)
-    MultiDeferDemo()
+	filename := "/tmp/tmp.txt"
+	ReadFile(filename)
+	MultiDeferDemo()
 }
 
 /**
@@ -19,19 +18,19 @@ func DeferDemo() {
  * 不管多么复杂的操作，都可以保证资源被正确的释放
  */
 func ReadFile(filename string) ([]byte, error) {
-    f, err := os.Open(filename)
-    if err != nil {
-        if os.IsNotExist(err) {
-            fmt.Println("file is not exists")
-        }
-        return nil, err
-    }
-    defer f.Close()
-    contentBytes, err := io.ReadAll(f)
-    if err == nil {
-        fmt.Println(string(contentBytes))
-    }
-    return contentBytes, err
+	f, err := os.Open(filename)
+	if err != nil {
+		if os.IsNotExist(err) {
+			fmt.Println("file is not exists")
+		}
+		return nil, err
+	}
+	defer f.Close()
+	contentBytes, err := io.ReadAll(f)
+	if err == nil {
+		fmt.Println(string(contentBytes))
+	}
+	return contentBytes, err
 }
 
 /**
@@ -41,20 +40,20 @@ func ReadFile(filename string) ([]byte, error) {
  * defer_func_3[x=>1]
  * defer_func_2[x=>2]
  * defer_func_1[x=>3]
-*/
-func MultiDeferDemo()  {
-    x := 0
-    defer func() {
-        x++
-        fmt.Printf("defer_func_1[x=>%d]\n", x)
-    }()
-    defer func() {
-        x++
-        fmt.Printf("defer_func_2[x=>%d]\n", x)
-    }()
-    defer func() {
-        x++
-        fmt.Printf("defer_func_3[x=>%d]\n", x)
-    }()
-    fmt.Printf("main_func[x=>%d]\n", x)
+ */
+func MultiDeferDemo() {
+	x := 0
+	defer func() {
+		x++
+		fmt.Printf("defer_func_1[x=>%d]\n", x)
+	}()
+	defer func() {
+		x++
+		fmt.Printf("defer_func_2[x=>%d]\n", x)
+	}()
+	defer func() {
+		x++
+		fmt.Printf("defer_func_3[x=>%d]\n", x)
+	}()
+	fmt.Printf("main_func[x=>%d]\n", x)
 }

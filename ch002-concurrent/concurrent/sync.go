@@ -1,10 +1,10 @@
 package concurrent
 
 import (
-    "fmt"
-    "strconv"
-    "sync"
-    "time"
+	"fmt"
+	"strconv"
+	"sync"
+	"time"
 )
 
 /**
@@ -12,12 +12,12 @@ import (
  * 在Go语言中，不仅有channel这类比较易用且高级的同步机制，还有sync.Mutex、sync.WaitGroup等比较原始的同步机制
  */
 func SyncDemo() {
-    syncUnsafeDemo()
-    syncMutexDemo()
-    syncRWMutex()
-    syncWaitGroup()
-    syncOnceDemo()
-    syncCondDemo()
+	syncUnsafeDemo()
+	syncMutexDemo()
+	syncRWMutex()
+	syncWaitGroup()
+	syncOnceDemo()
+	syncCondDemo()
 }
 
 /**
@@ -28,18 +28,18 @@ func SyncDemo() {
  * 导致这种情况的核心原因是资源sum不是并发安全的，因为同时会有多个协程交叉执行sum+=i，产生不可预料的结果
  * 使用go build、go run、go test这些Go语言工具链提供的命令时，添加-race标识可以帮你检查Go语言代码是否存在资源竞争
  */
-func syncUnsafeDemo()  {
-    // 共享的资源
-    sum := 0
-    // 开启100个协程让sum+10
-    for i := 0; i < 100; i++ {
-        go func() {
-            sum += 10
-        }()
-    }
-    // 防止主协程提前退出
-    time.Sleep(time.Second * 2)
-    fmt.Println(sum)
+func syncUnsafeDemo() {
+	// 共享的资源
+	sum := 0
+	// 开启100个协程让sum+10
+	for i := 0; i < 100; i++ {
+		go func() {
+			sum += 10
+		}()
+	}
+	// 防止主协程提前退出
+	time.Sleep(time.Second * 2)
+	fmt.Println(sum)
 }
 
 /**
@@ -47,21 +47,21 @@ func syncUnsafeDemo()  {
  * 互斥锁，指的是在同一时刻只有一个协程执行某段代码，其他协程都要等待该协程执行完毕后才能继续执行
  */
 func syncMutexDemo() {
-    var (
-        sum = 0
-        mutex sync.Mutex
-    )
-    for i :=0; i < 100; i++ {
-        go func() {
-            // 加锁Lock，解锁Unlock，defer语句确保锁一定会被释放
-            mutex.Lock()
-            defer mutex.Unlock()
-            sum += 10
-        }()
-    }
-    // 防止主协程提前退出
-    time.Sleep(time.Second * 2)
-    fmt.Println(sum)
+	var (
+		sum   = 0
+		mutex sync.Mutex
+	)
+	for i := 0; i < 100; i++ {
+		go func() {
+			// 加锁Lock，解锁Unlock，defer语句确保锁一定会被释放
+			mutex.Lock()
+			defer mutex.Unlock()
+			sum += 10
+		}()
+	}
+	// 防止主协程提前退出
+	time.Sleep(time.Second * 2)
+	fmt.Println(sum)
 }
 
 /**
@@ -70,30 +70,30 @@ func syncMutexDemo() {
  * sync.RWMutex比sync.Mutex性能要高，因为多个goroutine可以同时读数据，不再相互等待
  */
 func syncRWMutex() {
-    var (
-        sum = 0
-        mutex sync.RWMutex
-    )
-    // write
-    for i := 0; i < 100; i++ {
-        go func() {
-            mutex.Lock()
-            defer mutex.Unlock()
-            sum += 10
-        }()
-    }
-    // read
-    for i := 0; i < 10; i++ {
-        go func() {
-            // 只获取读锁
-            mutex.RLock()
-            defer mutex.RUnlock()
-            fmt.Println(sum)
-        }()
-    }
-    // 防止主协程提前退出
-    time.Sleep(time.Second * 2)
-    fmt.Println(sum)
+	var (
+		sum   = 0
+		mutex sync.RWMutex
+	)
+	// write
+	for i := 0; i < 100; i++ {
+		go func() {
+			mutex.Lock()
+			defer mutex.Unlock()
+			sum += 10
+		}()
+	}
+	// read
+	for i := 0; i < 10; i++ {
+		go func() {
+			// 只获取读锁
+			mutex.RLock()
+			defer mutex.RUnlock()
+			fmt.Println(sum)
+		}()
+	}
+	// 防止主协程提前退出
+	time.Sleep(time.Second * 2)
+	fmt.Println(sum)
 }
 
 /**
@@ -107,26 +107,26 @@ func syncRWMutex() {
  * 通过sync.WaitGroup可以很好地跟踪协程，在其他协程执行完毕后，主协程函数才能执行完毕
  */
 func syncWaitGroup() {
-    var (
-        sum = 0
-        mutex sync.RWMutex
-        wg sync.WaitGroup
-    )
-    const goroutineNum = 100
-    // 监听协程数，设置计数器为goroutineNum
-    wg.Add(goroutineNum)
-    for i := 0; i < goroutineNum; i++ {
-        go func() {
-            // 计数器值减1
-            defer wg.Done()
-            mutex.Lock()
-            defer mutex.Unlock()
-            sum += 10
-        }()
-    }
-    // 一直等待直到所有协程执行完毕
-    wg.Wait()
-    fmt.Println(sum)
+	var (
+		sum   = 0
+		mutex sync.RWMutex
+		wg    sync.WaitGroup
+	)
+	const goroutineNum = 100
+	// 监听协程数，设置计数器为goroutineNum
+	wg.Add(goroutineNum)
+	for i := 0; i < goroutineNum; i++ {
+		go func() {
+			// 计数器值减1
+			defer wg.Done()
+			mutex.Lock()
+			defer mutex.Unlock()
+			sum += 10
+		}()
+	}
+	// 一直等待直到所有协程执行完毕
+	wg.Wait()
+	fmt.Println(sum)
 }
 
 /**
@@ -135,23 +135,23 @@ func syncWaitGroup() {
  * sync.Once适用于创建某个对象的单例、只加载一次的资源等只执行一次的场景
  */
 func syncOnceDemo() {
-    var (
-        once sync.Once
-        wg sync.WaitGroup
-    )
-    const goroutineNum = 10
-    wg.Add(goroutineNum)
-    for i := 0; i < goroutineNum; i++ {
-        go func(i int) {
-            defer wg.Done()
-            fmt.Println("goroutine_" + strconv.Itoa(i))
-            // 保证代码执行一次
-            once.Do(func() {
-                fmt.Println("syncOnce")
-            })
-        }(i)
-    }
-    wg.Wait()
+	var (
+		once sync.Once
+		wg   sync.WaitGroup
+	)
+	const goroutineNum = 10
+	wg.Add(goroutineNum)
+	for i := 0; i < goroutineNum; i++ {
+		go func(i int) {
+			defer wg.Done()
+			fmt.Println("goroutine_" + strconv.Itoa(i))
+			// 保证代码执行一次
+			once.Do(func() {
+				fmt.Println("syncOnce")
+			})
+		}(i)
+	}
+	wg.Wait()
 }
 
 /**
@@ -162,29 +162,30 @@ func syncOnceDemo() {
  * 下面以10个人赛跑为例来演示sync.Cond的用法，在示例中有1个裁判，裁判要先等这10个人准备就绪，然后一声发令枪响，这10个人就可以开始跑了
  */
 func syncCondDemo() {
-    cond := sync.NewCond(&sync.Mutex{})
-    var wg sync.WaitGroup
-    wg.Add(11)
-    for i := 0; i < 10; i++ {
-        go func(num int) {
-            defer wg.Done()
-            fmt.Printf("[%d]号已经就位\n", num)
-            cond.L.Lock()
-            cond.Wait() //使当前协程进入等待状态而不结束，直到在其他协程中被唤醒通知到然后继续执行完成
-            cond.L.Unlock()
-            fmt.Printf("[%d]号running\n", num)
-        }(i)
-    }
-    // 等待所有goroutine都进入wait状态
-    time.Sleep(time.Second * 2)
-    go func() {
-        defer wg.Done()
-        fmt.Println("裁判已经就位，准备发令枪")
-        fmt.Println("比赛开始，大家准备跑")
-        cond.Broadcast() // 通知其他协程继续执行
-    }()
-    wg.Wait()
+	cond := sync.NewCond(&sync.Mutex{})
+	var wg sync.WaitGroup
+	wg.Add(11)
+	for i := 0; i < 10; i++ {
+		go func(num int) {
+			defer wg.Done()
+			fmt.Printf("[%d]号已经就位\n", num)
+			cond.L.Lock()
+			cond.Wait() //使当前协程进入等待状态而不结束，直到在其他协程中被唤醒通知到然后继续执行完成
+			cond.L.Unlock()
+			fmt.Printf("[%d]号running\n", num)
+		}(i)
+	}
+	// 等待所有goroutine都进入wait状态
+	time.Sleep(time.Second * 2)
+	go func() {
+		defer wg.Done()
+		fmt.Println("裁判已经就位，准备发令枪")
+		fmt.Println("比赛开始，大家准备跑")
+		cond.Broadcast() // 通知其他协程继续执行
+	}()
+	wg.Wait()
 }
+
 /**
  * 以上示例步骤解析:
  * 1. 通过sync.NewCond函数生成一个*sync.Cond，用于阻塞和唤醒协程

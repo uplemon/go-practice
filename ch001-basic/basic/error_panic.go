@@ -1,19 +1,19 @@
 package basic
 
 import (
-    "errors"
-    "fmt"
-    "strconv"
+	"errors"
+	"fmt"
+	"strconv"
 )
 
 func ErrorDemo() {
-    errorStrToIntTest()
-    errorSumTest()
-    commonErrorSumTest()
+	errorStrToIntTest()
+	errorSumTest()
+	commonErrorSumTest()
 }
 
 func PanicDemo() {
-    connDB("", "root", "123456")
+	connDB("", "root", "123456")
 }
 
 /**
@@ -33,12 +33,12 @@ func PanicDemo() {
  * 通过这种方式，可以让调用者自己根据错误信息决定如何进行下一步处理
  */
 func errorStrToIntTest() {
-    i, err := strconv.Atoi("a")
-    if err != nil {
-        fmt.Println(err)
-    } else {
-        fmt.Println(i)
-    }
+	i, err := strconv.Atoi("a")
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(i)
+	}
 }
 
 /**
@@ -46,19 +46,19 @@ func errorStrToIntTest() {
  * 自定义函数也可以返回错误信息给调用者
  */
 func errorSum(a, b int) (int, error) {
-    if a<0 || b<0 {
-        return 0, errors.New("a或者b不能为负数")
-    } else {
-        return a+b, nil
-    }
+	if a < 0 || b < 0 {
+		return 0, errors.New("a或者b不能为负数")
+	} else {
+		return a + b, nil
+	}
 }
 func errorSumTest() {
-    sum, err := errorSum(-1, 2)
-    if err != nil {
-        fmt.Println(err)
-    } else {
-        fmt.Println(sum)
-    }
+	sum, err := errorSum(-1, 2)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(sum)
+	}
 }
 
 /**
@@ -67,35 +67,38 @@ func errorSumTest() {
  * 自定义error其实就是先自定义一个新类型，比如结构体，然后让这个类型实现error接口
  */
 type commonError struct {
-    errorCode int // 错误码
-    errorMsg string // 错误信息
+	errorCode int    // 错误码
+	errorMsg  string // 错误信息
 }
+
 // 实现error接口
 func (ce *commonError) Error() string {
-    return ce.errorMsg
+	return ce.errorMsg
 }
+
 // 返回自定义error(返回更多信息)
 func commonErrorSum(a, b int) (int, error) {
-    if a<0 || b<0 {
-        return 0, &commonError{
-            errorCode: 1,
-            errorMsg: "a或者b不能为负数",
-        }
-    } else {
-        return a+b, nil
-    }
+	if a < 0 || b < 0 {
+		return 0, &commonError{
+			errorCode: 1,
+			errorMsg:  "a或者b不能为负数",
+		}
+	} else {
+		return a + b, nil
+	}
 }
+
 /**
  * 有了自定义error，并且可以包含更多的错误信息后，就可以使用这些信息了
  * 需要先把返回的error接口转换为自定义的错误类型(使用类型断言)
  */
 func commonErrorSumTest() {
-    sum, err := commonErrorSum(-1, 2)
-    if cm, ok := err.(*commonError); ok {
-        fmt.Printf("errorCode:%d, errorMsg:%s\n", cm.errorCode, cm.errorMsg)
-    } else {
-        fmt.Println(sum)
-    }
+	sum, err := commonErrorSum(-1, 2)
+	if cm, ok := err.(*commonError); ok {
+		fmt.Printf("errorCode:%d, errorMsg:%s\n", cm.errorCode, cm.errorMsg)
+	} else {
+		fmt.Println(sum)
+	}
 }
 
 /**
@@ -117,14 +120,14 @@ func commonErrorSumTest() {
  * [defer关键字 + 匿名函数 + recover函数]从panic异常中恢复
  */
 func connDB(host, username, password string) {
-    defer func() {
-        if p := recover(); p != nil {
-            fmt.Println(p)
-            //...
-        }
-    }()
-    if host == "" || username == "" || password == "" {
-        panic("(host|username|password)不能为空")
-    }
-    //...
+	defer func() {
+		if p := recover(); p != nil {
+			fmt.Println(p)
+			//...
+		}
+	}()
+	if host == "" || username == "" || password == "" {
+		panic("(host|username|password)不能为空")
+	}
+	//...
 }

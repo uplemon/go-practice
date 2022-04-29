@@ -10,17 +10,17 @@ type Age uint
 // 定义方法会在关键字func和方法名之间加一个接收者，接收者使用小括号包围
 // 接收者的定义和普通变量、函数参数等一样，前面是变量名，后面是接收者类型
 func (age Age) String() {
-    fmt.Println("age:", age)
+	fmt.Println("age:", age)
 }
 
 // 值接收者
 func (age Age) Modify1() {
-    age = Age(30)
+	age = Age(30)
 }
 
 // 指针接收者
 func (age *Age) Modify2() {
-    *age = Age(30)
+	*age = Age(30)
 }
 
 /**
@@ -28,10 +28,10 @@ func (age *Age) Modify2() {
  * 如果接收者是指针类型，我们对指针的修改是有效的，如果不是指针类型，修改就没有效果
  */
 func MethodDemo() {
-    age := Age(20)
-    age.String()
-    age.Modify1()
-    age.String()
-    age.Modify2()
-    age.String()
+	age := Age(20)
+	age.String()
+	age.Modify1()
+	age.String()
+	age.Modify2()
+	age.String()
 }
